@@ -47,6 +47,51 @@ struct DynamicCamera {
         // lookahead) appropriately. Next,
         // set the camera center by offsetting the cameraUnadjustedCenter, combining lookAhead.
         // Finally update cameraUnadjustedCenter, but without lookahead.
+
+        // Start from the camera center without lookahead.
+        camera.setCameraCenter(cameraUnadjustedCenter);
+
+        // Track the player's normalized horizontal position.
+        float playerX = camera.worldToWindowPercent(trackedPosWorld).x;
+
+        // Smooth the lookahead offset in world units.
+        float direction = (trackedVelocityWorld.x > 0.f) -
+                        (trackedVelocityWorld.x < 0.f);
+
+        float targetLookahead =
+            camera.windowPercentToWorldDist({lookAhead * direction, 0.f}).x;
+
+        lookaheadState += alpha * (targetLookahead - lookaheadState);
+
+        // Determine the camera displacement needed to correct the player's position.
+        float deltaX = 0.f;
+
+        if (playerX < softZoneX.min) {
+            // Hard left zone: align with the left hard boundary.
+            deltaX = playerX - softZoneX.min;
+        } else if (playerX > softZoneX.max) {
+            // Hard right zone: align with the right hard boundary.
+            deltaX = playerX - softZoneX.max;
+        } else if (playerX < deadZoneX.min) {
+            // Soft left zone: ease toward the left dead-zone boundary.
+            deltaX = alpha * (playerX - deadZoneX.min);
+        } else if (playerX > deadZoneX.max) {
+            // Soft right zone: ease toward the right dead-zone boundary.
+            deltaX = alpha * (playerX - deadZoneX.max);
+        }
+
+        // Convert the screen-percentage displacement into world units.
+        float worldDelta =
+            camera.windowPercentToWorldDist({deltaX, 0.f}).x;
+
+        cameraUnadjustedCenter.x += worldDelta;
+
+        // Apply the unadjusted center plus lookahead.
+        camera.setCameraCenter({
+            cameraUnadjustedCenter.x + lookaheadState,
+            cameraUnadjustedCenter.y
+        });
+
     }
 
     float alpha;  // alpha to use for damping of camera position, *as well as* for smoothing of
