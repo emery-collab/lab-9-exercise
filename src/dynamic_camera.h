@@ -79,8 +79,7 @@ struct DynamicCamera {
         }
 
         // Convert the screen-percentage displacement into world units.
-        float worldDelta =
-            camera.windowPercentToWorldDist({deltaX, 0.f}).x;
+        float worldDelta = camera.windowPercentToWorldDist({deltaX, 0.f}).x;
 
         cameraUnadjustedCenter.x += worldDelta;
 
