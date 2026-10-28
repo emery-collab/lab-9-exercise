@@ -80,7 +80,8 @@ public:
     sf::Vector2f getCameraCenter() const { return mViewCenterWorld; }
 
     // TODO NEW STUFF: Equivalent to above, but for vectors (distances for 1D) instead of points
-    // for these, 
+    // the two percentage functions require one extra step, a percentage of window width must first be converted into pixels
+    // then convert those two pixels into world units
     sf::Vector2f windowToWorldDist(const sf::Vector2f& vWindow) { return { vWindow * mWorldUnitsPerPixel }; };
     sf::Vector2f worldToWindowDist(const sf::Vector2f& vWorld) { return { vWorld / mWorldUnitsPerPixel }; };
     sf::Vector2f windowPercentToWorldDist(const sf::Vector2f& vWindowPercent) { return { vWindowPercent * mWindowSize * mWorldUnitsPerPixel }; };
