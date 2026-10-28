@@ -55,11 +55,9 @@ struct DynamicCamera {
         float playerX = camera.worldToWindowPercent(trackedPosWorld).x;
 
         // Smooth the lookahead offset in world units.
-        float direction = (trackedVelocityWorld.x > 0.f) -
-                        (trackedVelocityWorld.x < 0.f);
+        float direction = (trackedVelocityWorld.x > 0.f) - (trackedVelocityWorld.x < 0.f);
 
-        float targetLookahead =
-            camera.windowPercentToWorldDist({lookAhead * direction, 0.f}).x;
+        float targetLookahead = camera.windowPercentToWorldDist({lookAhead * direction, 0.f}).x;
 
         lookaheadState += alpha * (targetLookahead - lookaheadState);
 
@@ -87,10 +85,7 @@ struct DynamicCamera {
         cameraUnadjustedCenter.x += worldDelta;
 
         // Apply the unadjusted center plus lookahead.
-        camera.setCameraCenter({
-            cameraUnadjustedCenter.x + lookaheadState,
-            cameraUnadjustedCenter.y
-        });
+        camera.setCameraCenter({ cameraUnadjustedCenter.x + lookaheadState, cameraUnadjustedCenter.y });
 
     }
 
